@@ -1,0 +1,94 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "hotels": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      },
+      ".indexOn": ["verified", "status", "hotelName"]
+    },
+    
+    "ngos": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null", 
+        ".write": "$uid === auth.uid"
+      },
+      ".indexOn": ["verified", "status", "ngoName"]
+    },
+    
+    "individuals": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      },
+      ".indexOn": ["verified", "status"]
+    },
+    
+    "donations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["donorId", "donorType", "status", "timestamp", "createdAt"]
+    },
+    
+    "donation_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["ngoId", "foodType", "createdAt", "isActive"]
+    },
+    
+    "donation_acceptances": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["donationId", "ngoId", "status", "acceptanceTime"]
+    },
+    
+    "pickup_confirmations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["donationId", "acceptanceId", "pickupTime"]
+    },
+    
+    "notifications": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      },
+      ".indexOn": ["createdAt", "read", "type"]
+    },
+    
+    "ratings_reviews": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["reviewerId", "reviewedId", "rating", "createdAt"]
+    },
+    
+    "analytics": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    
+    "emergency_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["requesterId", "urgency", "status", "createdAt"]
+    },
+    
+    "responses": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

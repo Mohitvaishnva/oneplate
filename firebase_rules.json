@@ -1,0 +1,42 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "$userId === auth.uid"
+      }
+    },
+    "ngos": {
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "$userId === auth.uid"
+      }
+    },
+    "hotels": {
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "$userId === auth.uid"
+      }
+    },
+    "individuals": {
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "$userId === auth.uid"
+      }
+    },
+    "donation_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null && auth.uid != null",
+      "$requestId": {
+        ".validate": "newData.hasChildren(['id', 'ngoId', 'ngoName', 'description', 'foodType', 'createdAt', 'isActive']) && newData.child('ngoId').val() === auth.uid"
+      }
+    },
+    "donations": {
+      ".read": "auth != null",
+      ".write": "auth != null && auth.uid != null",
+      ".indexOn": ["status", "donorId", "timestamp"]
+    }
+  }
+}

@@ -1,0 +1,354 @@
+{
+  "users": {
+    "user_id_1": {
+      "email": "hotel@example.com",
+      "userType": "hotel",
+      "name": "Grand Hotel",
+      "phone": "+1234567890",
+      "address": {
+        "street": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001",
+        "coordinates": {
+          "latitude": 40.7128,
+          "longitude": -74.0060
+        }
+      },
+      "createdAt": "2025-09-30T00:00:00Z",
+      "isActive": true,
+      "profileImage": "https://example.com/hotel-profile.jpg"
+    },
+    "user_id_2": {
+      "email": "ngo@example.com",
+      "userType": "ngo",
+      "name": "Food Relief Foundation",
+      "phone": "+1234567891",
+      "registrationNumber": "NGO123456",
+      "address": {
+        "street": "456 Oak Ave",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10002",
+        "coordinates": {
+          "latitude": 40.7589,
+          "longitude": -73.9851
+        }
+      },
+      "createdAt": "2025-09-30T00:00:00Z",
+      "isActive": true,
+      "profileImage": "https://example.com/ngo-profile.jpg",
+      "verified": true
+    },
+    "user_id_3": {
+      "email": "individual@example.com",
+      "userType": "individual",
+      "name": "John Doe",
+      "phone": "+1234567892",
+      "address": {
+        "street": "789 Pine St",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10003",
+        "coordinates": {
+          "latitude": 40.7505,
+          "longitude": -73.9934
+        }
+      },
+      "createdAt": "2025-09-30T00:00:00Z",
+      "isActive": true,
+      "profileImage": "https://example.com/individual-profile.jpg"
+    }
+  },
+  "hotels": {
+    "user_id_1": {
+      "name": "Grand Hotel",
+      "licenseNumber": "HOTEL123456",
+      "cuisine": ["Italian", "Continental", "Indian"],
+      "capacity": 200,
+      "operatingHours": {
+        "open": "06:00",
+        "close": "23:00"
+      },
+      "rating": 4.5,
+      "totalDonations": 25,
+      "lastDonationDate": "2025-09-29T18:00:00Z",
+      "verified": true,
+      "status": "active"
+    }
+  },
+  "ngos": {
+    "user_id_2": {
+      "name": "Food Relief Foundation",
+      "registrationNumber": "NGO123456",
+      "focusAreas": ["Hunger Relief", "Poverty Alleviation", "Education"],
+      "servingAreas": ["Manhattan", "Brooklyn", "Queens"],
+      "capacity": 500,
+      "operatingHours": {
+        "open": "08:00",
+        "close": "20:00"
+      },
+      "totalReceived": 150,
+      "lastReceivedDate": "2025-09-29T19:00:00Z",
+      "verified": true,
+      "status": "active",
+      "documentsVerified": true
+    }
+  },
+  "individuals": {
+    "user_id_3": {
+      "name": "John Doe",
+      "preferences": {
+        "foodTypes": ["Vegetarian", "Gluten-Free"],
+        "maxDistance": 10,
+        "notifications": true
+      },
+      "donationHistory": {
+        "given": 5,
+        "received": 2
+      },
+      "verified": false,
+      "status": "active"
+    }
+  },
+  "donations": {
+    "donation_id_1": {
+      "donorId": "user_id_1",
+      "donorType": "hotel",
+      "donorName": "Grand Hotel",
+      "title": "Fresh Pasta and Salads",
+      "description": "Leftover pasta dishes and fresh salads from today's lunch service",
+      "foodType": "Italian",
+      "quantity": "20 servings",
+      "expiryTime": "2025-09-30T22:00:00Z",
+      "createdAt": "2025-09-30T18:00:00Z",
+      "images": [
+        "https://example.com/pasta1.jpg",
+        "https://example.com/salad1.jpg"
+      ],
+      "location": {
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "address": "123 Main St, New York, NY 10001"
+      },
+      "status": "available",
+      "dietaryInfo": {
+        "vegetarian": true,
+        "vegan": false,
+        "glutenFree": false,
+        "nutFree": true
+      },
+      "pickupInstructions": "Please come to the back entrance and ask for the manager",
+      "contactNumber": "+1234567890",
+      "priority": "medium",
+      "tags": ["fresh", "italian", "vegetarian"]
+    },
+    "donation_id_2": {
+      "donorId": "user_id_3",
+      "donorType": "individual",
+      "donorName": "John Doe",
+      "title": "Home-cooked Curry",
+      "description": "Extra curry and rice from family dinner",
+      "foodType": "Indian",
+      "quantity": "5 servings",
+      "expiryTime": "2025-10-01T12:00:00Z",
+      "createdAt": "2025-09-30T19:30:00Z",
+      "images": [
+        "https://example.com/curry1.jpg"
+      ],
+      "location": {
+        "latitude": 40.7505,
+        "longitude": -73.9934,
+        "address": "789 Pine St, New York, NY 10003"
+      },
+      "status": "available",
+      "dietaryInfo": {
+        "vegetarian": true,
+        "vegan": false,
+        "glutenFree": true,
+        "nutFree": false
+      },
+      "pickupInstructions": "Ring doorbell, apartment 4B",
+      "contactNumber": "+1234567892",
+      "priority": "low",
+      "tags": ["homemade", "indian", "spicy"]
+    }
+  },
+  "donation_requests": {
+    "request_id_1": {
+      "requesterId": "user_id_2",
+      "requesterType": "ngo",
+      "requesterName": "Food Relief Foundation",
+      "donationId": "donation_id_1",
+      "donorId": "user_id_1",
+      "message": "We would like to collect this food for our evening distribution program",
+      "requestTime": "2025-09-30T18:30:00Z",
+      "status": "pending",
+      "urgency": "medium",
+      "estimatedPickupTime": "2025-09-30T20:00:00Z",
+      "contactNumber": "+1234567891",
+      "numberOfBeneficiaries": 50
+    }
+  },
+  "donation_acceptances": {
+    "acceptance_id_1": {
+      "donationId": "donation_id_1",
+      "requestId": "request_id_1",
+      "donorId": "user_id_1",
+      "recipientId": "user_id_2",
+      "recipientType": "ngo",
+      "acceptanceTime": "2025-09-30T19:00:00Z",
+      "scheduledPickupTime": "2025-09-30T20:00:00Z",
+      "status": "confirmed",
+      "notes": "Please bring insulated containers",
+      "trackingCode": "TRK123456"
+    }
+  },
+  "pickup_confirmations": {
+    "pickup_id_1": {
+      "donationId": "donation_id_1",
+      "acceptanceId": "acceptance_id_1",
+      "pickedUpBy": "user_id_2",
+      "pickupTime": "2025-09-30T20:15:00Z",
+      "actualQuantity": "18 servings",
+      "condition": "excellent",
+      "recipientSignature": "data:image/png;base64,...",
+      "donorConfirmation": true,
+      "photos": [
+        "https://example.com/pickup1.jpg"
+      ],
+      "notes": "Food was fresh and well-packaged"
+    }
+  },
+  "notifications": {
+    "user_id_1": {
+      "notification_1": {
+        "type": "donation_request",
+        "title": "New Donation Request",
+        "message": "Food Relief Foundation requested your pasta donation",
+        "data": {
+          "donationId": "donation_id_1",
+          "requestId": "request_id_1"
+        },
+        "createdAt": "2025-09-30T18:30:00Z",
+        "read": false,
+        "priority": "medium"
+      }
+    },
+    "user_id_2": {
+      "notification_1": {
+        "type": "donation_accepted",
+        "title": "Donation Accepted",
+        "message": "Your request for pasta donation has been accepted",
+        "data": {
+          "donationId": "donation_id_1",
+          "acceptanceId": "acceptance_id_1"
+        },
+        "createdAt": "2025-09-30T19:00:00Z",
+        "read": false,
+        "priority": "high"
+      }
+    }
+  },
+  "ratings_reviews": {
+    "review_id_1": {
+      "reviewerId": "user_id_2",
+      "reviewerType": "ngo",
+      "reviewedId": "user_id_1",
+      "reviewedType": "hotel",
+      "donationId": "donation_id_1",
+      "rating": 5,
+      "review": "Excellent quality food and very responsive. Great packaging too!",
+      "createdAt": "2025-09-30T21:00:00Z",
+      "helpful": 3,
+      "categories": {
+        "foodQuality": 5,
+        "packaging": 5,
+        "communication": 5,
+        "timeliness": 4
+      }
+    }
+  },
+  "analytics": {
+    "daily_stats": {
+      "2025-09-30": {
+        "totalDonations": 25,
+        "totalRequests": 18,
+        "successfulMatches": 15,
+        "foodSaved": "450 servings",
+        "activeUsers": {
+          "hotels": 12,
+          "ngos": 8,
+          "individuals": 25
+        },
+        "topCuisines": ["Italian", "Indian", "Continental"],
+        "averageResponseTime": "15 minutes"
+      }
+    },
+    "user_stats": {
+      "user_id_1": {
+        "totalDonations": 25,
+        "successfulPickups": 22,
+        "averageRating": 4.7,
+        "foodSaved": "500 servings",
+        "lastActive": "2025-09-30T18:00:00Z"
+      },
+      "user_id_2": {
+        "totalRequests": 45,
+        "successfulPickups": 40,
+        "averageRating": 4.8,
+        "foodReceived": "800 servings",
+        "beneficiariesServed": 2000,
+        "lastActive": "2025-09-30T19:00:00Z"
+      }
+    }
+  },
+  "emergency_requests": {
+    "emergency_id_1": {
+      "requesterId": "user_id_2",
+      "requesterType": "ngo",
+      "title": "Urgent: Food needed for disaster relief",
+      "description": "Emergency shelter needs food for 100 people affected by flooding",
+      "urgency": "critical",
+      "requiredQuantity": "100 servings",
+      "deadline": "2025-09-30T23:00:00Z",
+      "location": {
+        "latitude": 40.7589,
+        "longitude": -73.9851,
+        "address": "Emergency Shelter, 456 Oak Ave"
+      },
+      "status": "active",
+      "responses": 3,
+      "createdAt": "2025-09-30T17:00:00Z"
+    }
+  },
+  "food_categories": {
+    "italian": {
+      "name": "Italian",
+      "popularItems": ["pasta", "pizza", "risotto"],
+      "averageShelfLife": "4 hours",
+      "storageInstructions": "Keep refrigerated"
+    },
+    "indian": {
+      "name": "Indian",
+      "popularItems": ["curry", "rice", "roti"],
+      "averageShelfLife": "6 hours",
+      "storageInstructions": "Keep warm or refrigerated"
+    }
+  },
+  "app_settings": {
+    "version": "1.0.0",
+    "maintenance": false,
+    "features": {
+      "realTimeTracking": true,
+      "pushNotifications": true,
+      "photoUpload": true,
+      "emergencyRequests": true
+    },
+    "limits": {
+      "maxImageSize": "5MB",
+      "maxDonationsPerDay": 10,
+      "maxRequestsPerDay": 20
+    }
+  }
+}

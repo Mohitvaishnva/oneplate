@@ -1,0 +1,70 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "ngos": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "$uid === auth.uid || auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "hotels": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "$uid === auth.uid || auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "individuals": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "$uid === auth.uid || auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "donations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["donorId", "donorType", "status", "createdAt"]
+    },
+    
+    "donation_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["ngoId", "status", "createdAt"]
+    },
+    
+    "donation_acceptances": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["donationId", "ngoId", "status"]
+    },
+    
+    "notifications": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "responses": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

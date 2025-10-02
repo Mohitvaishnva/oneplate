@@ -1,0 +1,138 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('userType').val() === 'admin'",
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['email', 'userType', 'name', 'phone', 'createdAt'])"
+      }
+    },
+    
+    "hotels": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "$uid === auth.uid && root.child('users').child(auth.uid).child('userType').val() === 'hotel'",
+        ".validate": "newData.hasChildren(['name', 'verified', 'status'])"
+      },
+      ".indexOn": ["verified", "status", "lastDonationDate"]
+    },
+    
+    "ngos": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "$uid === auth.uid && root.child('users').child(auth.uid).child('userType').val() === 'ngo'",
+        ".validate": "newData.hasChildren(['name', 'registrationNumber', 'verified', 'status'])"
+      },
+      ".indexOn": ["verified", "status", "lastReceivedDate"]
+    },
+    
+    "individuals": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "$uid === auth.uid && root.child('users').child(auth.uid).child('userType').val() === 'individual'",
+        ".validate": "newData.hasChildren(['name', 'status'])"
+      },
+      ".indexOn": ["verified", "status"]
+    },
+    
+    "donations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$donationId": {
+        ".validate": "newData.hasChildren(['donorId', 'donorType', 'title', 'description', 'quantity', 'expiryTime', 'createdAt', 'status', 'location']) && (newData.child('donorId').val() === auth.uid || data.child('donorId').val() === auth.uid)",
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'available' || newData.val() === 'reserved' || newData.val() === 'completed' || newData.val() === 'expired')"
+        }
+      },
+      ".indexOn": ["donorId", "donorType", "status", "expiryTime", "createdAt", "foodType", "priority"]
+    },
+    
+    "donation_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$requestId": {
+        ".validate": "newData.hasChildren(['requesterId', 'requesterType', 'donationId', 'donorId', 'requestTime', 'status']) && (newData.child('requesterId').val() === auth.uid || newData.child('donorId').val() === auth.uid || data.child('requesterId').val() === auth.uid || data.child('donorId').val() === auth.uid)",
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'accepted' || newData.val() === 'rejected' || newData.val() === 'cancelled')"
+        }
+      },
+      ".indexOn": ["requesterId", "donationId", "donorId", "status", "requestTime", "urgency"]
+    },
+    
+    "donation_acceptances": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$acceptanceId": {
+        ".validate": "newData.hasChildren(['donationId', 'donorId', 'recipientId', 'acceptanceTime', 'status']) && (newData.child('donorId').val() === auth.uid || newData.child('recipientId').val() === auth.uid || data.child('donorId').val() === auth.uid || data.child('recipientId').val() === auth.uid)",
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'confirmed' || newData.val() === 'in_progress' || newData.val() === 'completed' || newData.val() === 'cancelled')"
+        }
+      },
+      ".indexOn": ["donationId", "donorId", "recipientId", "status", "acceptanceTime", "scheduledPickupTime"]
+    },
+    
+    "pickup_confirmations": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$pickupId": {
+        ".validate": "newData.hasChildren(['donationId', 'acceptanceId', 'pickedUpBy', 'pickupTime']) && (root.child('donation_acceptances').child(newData.child('acceptanceId').val()).child('donorId').val() === auth.uid || root.child('donation_acceptances').child(newData.child('acceptanceId').val()).child('recipientId').val() === auth.uid)"
+      },
+      ".indexOn": ["donationId", "acceptanceId", "pickedUpBy", "pickupTime"]
+    },
+    
+    "notifications": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        "$notificationId": {
+          ".validate": "newData.hasChildren(['type', 'title', 'message', 'createdAt', 'read'])"
+        }
+      },
+      ".indexOn": ["createdAt", "read", "type", "priority"]
+    },
+    
+    "ratings_reviews": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$reviewId": {
+        ".validate": "newData.hasChildren(['reviewerId', 'reviewedId', 'donationId', 'rating', 'createdAt']) && newData.child('reviewerId').val() === auth.uid && newData.child('rating').isNumber() && newData.child('rating').val() >= 1 && newData.child('rating').val() <= 5"
+      },
+      ".indexOn": ["reviewerId", "reviewedId", "donationId", "rating", "createdAt"]
+    },
+    
+    "analytics": {
+      "daily_stats": {
+        ".read": "auth != null",
+        ".write": "root.child('users').child(auth.uid).child('userType').val() === 'admin'"
+      },
+      "user_stats": {
+        "$uid": {
+          ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('userType').val() === 'admin'",
+          ".write": "root.child('users').child(auth.uid).child('userType').val() === 'admin'"
+        }
+      }
+    },
+    
+    "emergency_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('users').child(auth.uid).child('userType').val() === 'ngo' || root.child('users').child(auth.uid).child('userType').val() === 'admin')",
+      "$emergencyId": {
+        ".validate": "newData.hasChildren(['requesterId', 'requesterType', 'title', 'description', 'urgency', 'deadline', 'status', 'createdAt']) && newData.child('requesterId').val() === auth.uid"
+      },
+      ".indexOn": ["requesterId", "urgency", "status", "deadline", "createdAt"]
+    },
+    
+    "food_categories": {
+      ".read": "auth != null", 
+      ".write": "root.child('users').child(auth.uid).child('userType').val() === 'admin'"
+    },
+    
+    "app_settings": {
+      ".read": "auth != null",
+      ".write": "root.child('users').child(auth.uid).child('userType').val() === 'admin'"
+    }
+  }
+}

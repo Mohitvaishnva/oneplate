@@ -1,0 +1,171 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('userType').val() === 'admin'",
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['userType', 'email', 'createdAt']) && (newData.child('userType').val() === 'hotel' || newData.child('userType').val() === 'ngo' || newData.child('userType').val() === 'individual')"
+      },
+      ".indexOn": ["userType", "createdAt", "isActive"]
+    },
+    
+    "hotels": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid && root.child('users').child(auth.uid).child('userType').val() === 'hotel'",
+        ".validate": "newData.hasChildren(['hotelName', 'ownerName', 'address', 'phoneNumber', 'email']) && newData.child('userType').val() === 'hotel'"
+      },
+      ".indexOn": ["verified", "status", "hotelName", "foodType", "createdAt"]
+    },
+    
+    "ngos": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null", 
+        ".write": "$uid === auth.uid && root.child('users').child(auth.uid).child('userType').val() === 'ngo'",
+        ".validate": "newData.hasChildren(['ngoName', 'ownerName', 'address', 'phoneNumber', 'email', 'areaCovered']) && newData.child('userType').val() === 'ngo'"
+      },
+      ".indexOn": ["verified", "status", "ngoName", "areaCovered", "createdAt"]
+    },
+    
+    "individuals": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid && root.child('users').child(auth.uid).child('userType').val() === 'individual'",
+        ".validate": "newData.hasChildren(['name', 'email', 'phone', 'address']) && newData.child('userType').val() === 'individual'"
+      },
+      ".indexOn": ["verified", "status", "name", "createdAt"]
+    },
+    
+    "donations": {
+      ".read": "auth != null",
+      ".write": "auth != null && (newData.child('donorId').val() === auth.uid || data.child('donorId').val() === auth.uid)",
+      "$donationId": {
+        ".validate": "newData.hasChildren(['donorId', 'donorType', 'foodType', 'description', 'status', 'timestamp']) && (newData.child('status').val() === 'available' || newData.child('status').val() === 'accepted' || newData.child('status').val() === 'completed' || newData.child('status').val() === 'expired')"
+      },
+      ".indexOn": ["donorId", "donorType", "status", "timestamp", "createdAt", "foodType", "expiryTime"]
+    },
+    
+    "donation_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null && (newData.child('ngoId').val() === auth.uid || data.child('ngoId').val() === auth.uid || root.child('users').child(auth.uid).child('userType').val() === 'ngo')",
+      "$requestId": {
+        ".validate": "newData.hasChildren(['ngoId', 'ngoName', 'foodType', 'description', 'isActive', 'createdAt'])"
+      },
+      ".indexOn": ["ngoId", "foodType", "createdAt", "isActive", "ngoName"]
+    },
+    
+    "donation_acceptances": {
+      ".read": "auth != null",
+      ".write": "auth != null && (newData.child('ngoId').val() === auth.uid || data.child('ngoId').val() === auth.uid || newData.child('donorId').val() === auth.uid || data.child('donorId').val() === auth.uid)",
+      "$acceptanceId": {
+        ".validate": "newData.hasChildren(['donationId', 'ngoId', 'donorId', 'status', 'acceptanceTime']) && (newData.child('status').val() === 'pending' || newData.child('status').val() === 'confirmed' || newData.child('status').val() === 'completed' || newData.child('status').val() === 'cancelled')"
+      },
+      ".indexOn": ["donationId", "ngoId", "donorId", "status", "acceptanceTime"]
+    },
+    
+    "pickup_confirmations": {
+      ".read": "auth != null",
+      ".write": "auth != null && (newData.child('ngoId').val() === auth.uid || data.child('ngoId').val() === auth.uid || newData.child('donorId').val() === auth.uid || data.child('donorId').val() === auth.uid)",
+      "$confirmationId": {
+        ".validate": "newData.hasChildren(['donationId', 'acceptanceId', 'ngoId', 'donorId', 'pickupTime', 'status'])"
+      },
+      ".indexOn": ["donationId", "acceptanceId", "ngoId", "donorId", "pickupTime", "status"]
+    },
+    
+    "notifications": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid || newData.child('recipientId').val() === $uid",
+        ".validate": "newData.hasChildren(['message', 'createdAt', 'read', 'type']) && (newData.child('type').val() === 'donation' || newData.child('type').val() === 'acceptance' || newData.child('type').val() === 'pickup' || newData.child('type').val() === 'general')"
+      },
+      ".indexOn": ["createdAt", "read", "type", "priority"]
+    },
+    
+    "ratings_reviews": {
+      ".read": "auth != null",
+      ".write": "auth != null && newData.child('reviewerId').val() === auth.uid",
+      "$reviewId": {
+        ".validate": "newData.hasChildren(['reviewerId', 'reviewedId', 'rating', 'createdAt']) && newData.child('rating').val() >= 1 && newData.child('rating').val() <= 5"
+      },
+      ".indexOn": ["reviewerId", "reviewedId", "rating", "createdAt", "reviewType"]
+    },
+    
+    "analytics": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('userType').val() === 'admin'",
+      ".write": "auth != null",
+      "daily_stats": {
+        ".indexOn": ["date", "userType", "actionType"]
+      },
+      "monthly_stats": {
+        ".indexOn": ["month", "year", "userType"]
+      }
+    },
+    
+    "emergency_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null && (newData.child('requesterId').val() === auth.uid || data.child('requesterId').val() === auth.uid || root.child('users').child(auth.uid).child('userType').val() === 'ngo')",
+      "$requestId": {
+        ".validate": "newData.hasChildren(['requesterId', 'urgency', 'status', 'createdAt', 'description']) && (newData.child('urgency').val() === 'low' || newData.child('urgency').val() === 'medium' || newData.child('urgency').val() === 'high' || newData.child('urgency').val() === 'critical')"
+      },
+      ".indexOn": ["requesterId", "urgency", "status", "createdAt", "location"]
+    },
+    
+    "responses": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$responseId": {
+        ".validate": "newData.hasChildren(['responderId', 'targetId', 'type', 'createdAt'])"
+      },
+      ".indexOn": ["responderId", "targetId", "type", "createdAt", "status"]
+    },
+    
+    "chat_messages": {
+      "$chatId": {
+        ".read": "auth != null && (data.child('participants').child(auth.uid).exists() || newData.child('participants').child(auth.uid).exists())",
+        ".write": "auth != null && (data.child('participants').child(auth.uid).exists() || newData.child('participants').child(auth.uid).exists())",
+        "messages": {
+          "$messageId": {
+            ".validate": "newData.hasChildren(['senderId', 'message', 'timestamp']) && newData.child('senderId').val() === auth.uid"
+          },
+          ".indexOn": ["timestamp", "senderId"]
+        }
+      }
+    },
+    
+    "reports": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('userType').val() === 'admin'",
+      ".write": "auth != null",
+      "$reportId": {
+        ".validate": "newData.hasChildren(['reporterId', 'reportedId', 'reason', 'createdAt'])"
+      },
+      ".indexOn": ["reporterId", "reportedId", "status", "createdAt", "priority"]
+    },
+    
+    "app_settings": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('userType').val() === 'admin'"
+    },
+    
+    "user_preferences": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    
+    "location_tracking": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('userType').val() === 'admin'",
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['latitude', 'longitude', 'timestamp'])"
+      },
+      ".indexOn": ["timestamp", "isActive"]
+    }
+  }
+}
