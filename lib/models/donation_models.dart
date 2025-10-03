@@ -64,29 +64,77 @@ class Donation {
   }
 
   factory Donation.fromJson(Map<String, dynamic> json, String id) {
-    return Donation(
-      id: id,
-      donorId: json['donorId'] ?? '',
-      donorType: UserTypeExtension.fromString(json['donorType'] ?? 'individual'),
-      donorName: json['donorName'] ?? '',
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      foodType: json['foodType'] ?? '',
-      quantity: json['quantity'] ?? '',
-      expiryTime: DateTime.parse(json['expiryTime'] ?? DateTime.now().toIso8601String()),
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      images: List<String>.from(json['images'] ?? []),
-      location: Location.fromJson(json['location'] ?? {}),
-      status: DonationStatusExtension.fromString(json['status'] ?? 'available'),
-      dietaryInfo: DietaryInfo.fromJson(json['dietaryInfo'] ?? {}),
-      pickupInstructions: json['pickupInstructions'] ?? '',
-      contactNumber: json['contactNumber'] ?? '',
-      priority: PriorityLevel.values.firstWhere(
-        (p) => p.name == json['priority'],
-        orElse: () => PriorityLevel.medium,
-      ),
-      tags: List<String>.from(json['tags'] ?? []),
-    );
+    try {
+      // Safely handle location data
+      Map<String, dynamic> locationData = {};
+      if (json['location'] != null) {
+        if (json['location'] is Map<Object?, Object?>) {
+          locationData = Map<String, dynamic>.from(json['location'] as Map<Object?, Object?>);
+        } else if (json['location'] is Map<String, dynamic>) {
+          locationData = json['location'];
+        }
+      }
+
+      // Safely handle dietaryInfo data
+      Map<String, dynamic> dietaryData = {};
+      if (json['dietaryInfo'] != null) {
+        if (json['dietaryInfo'] is Map<Object?, Object?>) {
+          dietaryData = Map<String, dynamic>.from(json['dietaryInfo'] as Map<Object?, Object?>);
+        } else if (json['dietaryInfo'] is Map<String, dynamic>) {
+          dietaryData = json['dietaryInfo'];
+        }
+      }
+
+      return Donation(
+        id: id,
+        donorId: json['donorId']?.toString() ?? '',
+        donorType: UserTypeExtension.fromString(json['donorType']?.toString() ?? 'individual'),
+        donorName: json['donorName']?.toString() ?? '',
+        title: json['title']?.toString() ?? '',
+        description: json['description']?.toString() ?? '',
+        foodType: json['foodType']?.toString() ?? '',
+        quantity: json['quantity']?.toString() ?? '',
+        expiryTime: _parseDateTime(json['expiryTime']),
+        createdAt: _parseDateTime(json['createdAt']),
+        images: _parseStringList(json['images']),
+        location: Location.fromJson(locationData),
+        status: DonationStatusExtension.fromString(json['status']?.toString() ?? 'available'),
+        dietaryInfo: DietaryInfo.fromJson(dietaryData),
+        pickupInstructions: json['pickupInstructions']?.toString() ?? '',
+        contactNumber: json['contactNumber']?.toString() ?? '',
+        priority: PriorityLevel.values.firstWhere(
+          (p) => p.name == json['priority']?.toString(),
+          orElse: () => PriorityLevel.medium,
+        ),
+        tags: _parseStringList(json['tags']),
+      );
+    } catch (e) {
+      print('Error parsing donation data: $e');
+      print('JSON: $json');
+      rethrow;
+    }
+  }
+
+  static DateTime _parseDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+    try {
+      if (value is String) {
+        return DateTime.parse(value);
+      } else if (value is int) {
+        return DateTime.fromMillisecondsSinceEpoch(value);
+      }
+      return DateTime.now();
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  static List<String> _parseStringList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) {
+      return value.map((e) => e.toString()).toList();
+    }
+    return [];
   }
 }
 

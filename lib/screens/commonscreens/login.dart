@@ -33,23 +33,71 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
 
-      var result = await FirebaseService.signInWithEmailPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
+      try {
+        // Reduce timeout to 10 seconds for faster response
+        var result = await Future.any([
+          FirebaseService.signInWithEmailPassword(
+            _emailController.text.trim(),
+            _passwordController.text.trim(),
+          ),
+          Future.delayed(
+            const Duration(seconds: 10), // Reduced from 15 to 10 seconds
+            () => null, // Return null for timeout
+          ),
+        ]);
 
-      setState(() {
-        _isLoading = false;
-      });
+        if (!mounted) return;
+        
+        setState(() {
+          _isLoading = false;
+        });
 
-      if (result.success && result.user != null) {
-        // Check user type and navigate accordingly
-        await _navigateBasedOnUserType(result.user!.uid);
-      } else {
+        if (result == null) {
+          // Timeout occurred
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login is taking too long. Please check your internet connection and try again.'),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 4),
+            ),
+          );
+          return;
+        }
+
+        if (result.success && result.user != null) {
+          // Show success message briefly
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login successful! Redirecting...'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 1),
+            ),
+          );
+          
+          // Check user type and navigate accordingly
+          await _navigateBasedOnUserType(result.user!.uid);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result.error ?? 'Login failed. Please try again.'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        
+        setState(() {
+          _isLoading = false;
+        });
+        
+        print('Login error: $e'); // Debug print
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result.error ?? 'Login failed. Please try again.'),
+            content: Text('Login error: Please check your internet connection and try again.'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -455,13 +503,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                   child: _isLoading
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                          ),
+                                      ? Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: const [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 12),
+                                                Text(
+                                                  'Signing in...',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              'This may take a moment',
+                                              style: TextStyle(
+                                                color: Colors.white70,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
                                         )
                                       : const Text(
                                           'Log In',

@@ -61,7 +61,9 @@ class _NGOResponsesListScreenState extends State<NGOResponsesListScreen>
               children: [
                 const Icon(Icons.error_outline, color: Colors.white),
                 const SizedBox(width: 8),
-                Text('Error loading responses: $e'),
+                Expanded(
+                  child: Text('Error loading responses: $e'),
+                ),
               ],
             ),
             backgroundColor: Colors.red,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'individualhome.dart';
+import 'createindividual.dart';
 import 'donatehistory.dart';
 import 'individualprofile.dart';
-import 'response.dart';
 
 class IndividualMainScreen extends StatefulWidget {
   const IndividualMainScreen({super.key});
@@ -16,9 +16,9 @@ class _IndividualMainScreenState extends State<IndividualMainScreen> {
 
   final List<Widget> _screens = [
     const IndividualHomeScreen(),
+    const CreateIndividualDonationScreen(),
     const IndividualDonateHistoryScreen(),
     const IndividualProfileScreen(),
-    const IndividualResponseScreen(),
   ];
 
   @override
@@ -33,12 +33,16 @@ class _IndividualMainScreenState extends State<IndividualMainScreen> {
             _currentIndex = index;
           });
         },
-        selectedItemColor: Colors.green,
+        selectedItemColor: const Color(0xFF6C63FF),
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'Donate',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
@@ -47,10 +51,6 @@ class _IndividualMainScreenState extends State<IndividualMainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Response',
           ),
         ],
       ),

@@ -58,15 +58,24 @@ class FirebaseService {
         return AuthResult(success: false, error: 'Please enter your password');
       }
 
+      // Add debug info
+      print('Attempting Firebase auth for: $email');
+      
+      // Use signInWithEmailAndPassword directly without extra settings
       final result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      
+      print('Firebase auth successful for: $email');
       return AuthResult(success: true, user: result.user);
+      
     } on FirebaseAuthException catch (e) {
+      print('Firebase auth error: ${e.code} - ${e.message}');
       return AuthResult(success: false, error: _getAuthErrorMessage(e.code));
     } catch (e) {
-      return AuthResult(success: false, error: 'An unexpected error occurred. Please try again.');
+      print('General auth error: $e');
+      return AuthResult(success: false, error: 'Login failed. Please check your connection and try again.');
     }
   }
 
@@ -99,8 +108,14 @@ class FirebaseService {
         return 'This user account has been disabled.';
       case 'too-many-requests':
         return 'Too many failed login attempts. Please try again later.';
+      case 'network-request-failed':
+        return 'Network error. Please check your internet connection.';
+      case 'timeout':
+        return 'Request timeout. Please try again.';
+      case 'invalid-credential':
+        return 'Invalid credentials. Please check your email and password.';
       default:
-        return 'Authentication failed. Please try again.';
+        return 'Authentication failed. Please check your connection and try again.';
     }
   }
 
@@ -278,10 +293,35 @@ class FirebaseService {
     if (!snapshot.exists) return [];
     
     final donations = <Donation>[];
-    final data = Map<String, dynamic>.from(snapshot.value as Map);
     
-    for (final entry in data.entries) {
-      donations.add(Donation.fromJson(Map<String, dynamic>.from(entry.value), entry.key));
+    // Handle the snapshot data more safely
+    final data = snapshot.value;
+    if (data == null) return [];
+    
+    // Convert to Map safely
+    Map<String, dynamic> donationsMap;
+    if (data is Map<Object?, Object?>) {
+      donationsMap = Map<String, dynamic>.from(data);
+    } else {
+      return [];
+    }
+    
+    for (final entry in donationsMap.entries) {
+      try {
+        // Safely convert each donation entry
+        Map<String, dynamic> donationData;
+        if (entry.value is Map<Object?, Object?>) {
+          donationData = Map<String, dynamic>.from(entry.value as Map<Object?, Object?>);
+        } else {
+          continue; // Skip this entry if it's not a map
+        }
+        
+        donations.add(Donation.fromJson(donationData, entry.key));
+      } catch (e) {
+        print('Error parsing donation ${entry.key}: $e');
+        // Skip this donation and continue with others
+        continue;
+      }
     }
     
     // Sort by creation time (newest first)
@@ -302,13 +342,38 @@ class FirebaseService {
     if (!snapshot.exists) return [];
     
     final donations = <Donation>[];
-    final data = Map<String, dynamic>.from(snapshot.value as Map);
     
-    for (final entry in data.entries) {
-      final donation = Donation.fromJson(Map<String, dynamic>.from(entry.value), entry.key);
-      // Filter out expired donations
-      if (donation.expiryTime.isAfter(now)) {
-        donations.add(donation);
+    // Handle the snapshot data more safely
+    final data = snapshot.value;
+    if (data == null) return [];
+    
+    // Convert to Map safely
+    Map<String, dynamic> donationsMap;
+    if (data is Map<Object?, Object?>) {
+      donationsMap = Map<String, dynamic>.from(data);
+    } else {
+      return [];
+    }
+    
+    for (final entry in donationsMap.entries) {
+      try {
+        // Safely convert each donation entry
+        Map<String, dynamic> donationData;
+        if (entry.value is Map<Object?, Object?>) {
+          donationData = Map<String, dynamic>.from(entry.value as Map<Object?, Object?>);
+        } else {
+          continue; // Skip this entry if it's not a map
+        }
+        
+        final donation = Donation.fromJson(donationData, entry.key);
+        // Filter out expired donations
+        if (donation.expiryTime.isAfter(now)) {
+          donations.add(donation);
+        }
+      } catch (e) {
+        print('Error parsing available donation ${entry.key}: $e');
+        // Skip this donation and continue with others
+        continue;
       }
     }
     

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/firebase_service.dart';
 import '../../models/user_models.dart' as models;
 import '../../utils/database_enums.dart';
+import '../../firebaseconfig.dart';
 import 'individualmain.dart';
 
 class IndividualRegisterScreen extends StatefulWidget {
@@ -65,7 +66,7 @@ class _IndividualRegisterScreenState extends State<IndividualRegisterScreen> {
           createdAt: DateTime.now(),
         );
 
-        // Create Individual object
+        // Create Individual object with additional profile fields for consistency
         final individual = models.Individual(
           uid: FirebaseService.currentUserId!,
           name: _nameController.text.trim(),
@@ -79,6 +80,24 @@ class _IndividualRegisterScreenState extends State<IndividualRegisterScreen> {
         try {
           await FirebaseService.saveUser(user);
           await FirebaseService.saveIndividual(individual);
+          
+          // Also save additional profile fields to individuals table for easier access
+          final userId = FirebaseService.currentUserId!;
+          final additionalIndividualData = {
+            'email': _emailController.text.trim(),
+            'phoneNumber': _phoneController.text.trim(),
+            'phone': _phoneController.text.trim(), // For backward compatibility
+            'address': '${_addressController.text.trim()}, ${_cityController.text.trim()}, ${_stateController.text.trim()}, ${_zipCodeController.text.trim()}',
+            'createdAt': DateTime.now().toIso8601String(),
+            'totalDonations': 0,
+            'peopleHelped': 0,
+          };
+          
+          // Update the individuals table with additional fields
+          await dbRef
+              .child('individuals')
+              .child(userId)
+              .update(additionalIndividualData);
           
           setState(() {
             _isLoading = false;

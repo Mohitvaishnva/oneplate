@@ -116,7 +116,7 @@ class WelcomeScreen extends StatelessWidget {
                         flex: 1,
                         child: _buildServiceOption(
                           context: context,
-                          imagePath: 'lib/images/log2.png',
+                          imagePath: 'lib/images/log3.png',
                           title: 'Hotels/Restro',
                           onPressed: () {
                             Navigator.push(
@@ -136,7 +136,7 @@ class WelcomeScreen extends StatelessWidget {
                         flex: 1,
                         child: _buildServiceOption(
                           context: context,
-                          imagePath: 'lib/images/log3.png',
+                          imagePath: 'lib/images/log2.png',
                           title: 'Individual',
                           onPressed: () {
                             Navigator.push(

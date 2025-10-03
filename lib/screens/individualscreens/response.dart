@@ -26,6 +26,7 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
     try {
       final currentUserId = getCurrentUserId();
       if (currentUserId != null) {
+        // Fetch notifications for NGO responses/acceptances
         final notificationsSnapshot = await dbRef
             .child('notifications')
             .orderByChild('donorId')
@@ -36,19 +37,36 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
           final notificationsData = notificationsSnapshot.value as Map<Object?, Object?>;
           List<Map<String, dynamic>> loadedNotifications = [];
 
-          notificationsData.forEach((key, value) {
+          for (var entry in notificationsData.entries) {
             try {
-              final notification = Map<String, dynamic>.from(value as Map<Object?, Object?>);
-              notification['id'] = key.toString();
+              final notification = Map<String, dynamic>.from(entry.value as Map<Object?, Object?>);
+              notification['id'] = entry.key.toString();
               
-              // Only show notifications for individual donors
-              if (notification['donorType'] == 'individual') {
+              // Only show donation acceptance notifications for individual donors
+              if (notification['donorType'] == 'individual' && 
+                  notification['type'] == 'donation_accepted') {
+                
+                // Fetch additional donation details if needed
+                final donationId = notification['donationId'];
+                if (donationId != null) {
+                  final donationSnapshot = await dbRef
+                      .child('donations')
+                      .child(donationId)
+                      .get();
+                  
+                  if (donationSnapshot.exists) {
+                    final donationData = Map<String, dynamic>.from(donationSnapshot.value as Map<Object?, Object?>);
+                    notification['donationDetails'] = donationData;
+                  }
+                }
+                
                 loadedNotifications.add(notification);
               }
             } catch (e) {
+              print('Error processing notification: $e');
               // Skip invalid notifications
             }
-          });
+          }
 
           // Sort by timestamp (newest first)
           loadedNotifications.sort((a, b) {
@@ -63,6 +81,7 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
         }
       }
     } catch (e) {
+      print('Error loading notifications: $e');
       // Handle error
     } finally {
       setState(() {
@@ -80,6 +99,21 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
       return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
     } catch (e) {
       return 'Unknown date';
+    }
+  }
+
+  String _getStatusText(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'accepted':
+        return 'Awaiting pickup';
+      case 'picked_up':
+        return 'Picked up successfully';
+      case 'completed':
+        return 'Donation completed';
+      case 'cancelled':
+        return 'Cancelled';
+      default:
+        return 'Processing';
     }
   }
 
@@ -228,6 +262,17 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
                                                     color: Colors.black54,
                                                   ),
                                                 ),
+                                                if (notification['donationTitle'] != null) ...[
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Donation: ${notification['donationTitle']}',
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.black45,
+                                                      fontStyle: FontStyle.italic,
+                                                    ),
+                                                  ),
+                                                ],
                                               ],
                                             ),
                                           ),
@@ -276,7 +321,7 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            _formatDate(notification['timestamp']),
+                                            'Accepted: ${_formatDate(notification['timestamp'])}',
                                             style: const TextStyle(
                                               fontSize: 12,
                                               color: Colors.black54,
@@ -284,6 +329,37 @@ class _IndividualResponseScreenState extends State<IndividualResponseScreen> {
                                           ),
                                         ],
                                       ),
+                                      // Add pickup status if available
+                                      if (notification['donationDetails'] != null) ...[
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.info_outline,
+                                                size: 16,
+                                                color: Colors.blue,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  'Status: ${_getStatusText(notification['donationDetails']['status'])}',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.blue,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),

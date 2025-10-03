@@ -29,6 +29,7 @@
     "donation_requests": {
       ".read": "auth != null",
       ".write": "auth != null && auth.uid != null",
+      ".indexOn": ["ngoId", "createdAt", "isActive"],
       "$requestId": {
         ".validate": "newData.hasChildren(['id', 'ngoId', 'ngoName', 'description', 'foodType', 'createdAt', 'isActive']) && newData.child('ngoId').val() === auth.uid"
       }
@@ -36,7 +37,12 @@
     "donations": {
       ".read": "auth != null",
       ".write": "auth != null && auth.uid != null",
-      ".indexOn": ["status", "donorId", "timestamp"]
+      ".indexOn": ["status", "donorId", "timestamp", "ngoId"]
+    },
+    "notifications": {
+      ".read": "auth != null",
+      ".write": "auth != null && auth.uid != null",
+      ".indexOn": ["donorId", "donorType", "timestamp", "isRead"]
     }
   }
 }
