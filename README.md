@@ -1,243 +1,174 @@
-# OnePlate - Food Donation App
+# 🍽️ OnePlate - Food Donation Platform
 
-OnePlate is a Flutter application that connects NGOs, Hotels, and Individual donors to facilitate food donation and reduce food waste.
+A Flutter mobile application connecting food donors (hotels and individuals) with NGOs to reduce food waste and help those in need.
 
-## Features
+## 📱 About OnePlate
 
-### 🏢 NGO Features
-- Register as an NGO with organization details
-- Create food requests specifying needs and food type preferences
-- View available donations from hotels and individuals
-- Accept donations and manage donation history
-- View responses from donors
+OnePlate is a comprehensive food donation platform that bridges the gap between food surplus and food scarcity. The app enables hotels and individuals to donate excess food to NGOs, who can then distribute it to those in need.
 
-### 🏨 Hotel Features
-- Register hotel with details and food type offerings
-- Browse NGO food requests
-- Send donations with quantity, preparation time, and expiry details
-- View donation history
-- Get responses from NGOs
+## ✨ Features
 
-### 👤 Individual Features
-- Register as individual donor
-- Browse NGO requests
-- Make food donations
+### 🏨 For Hotels
+- Create and manage food donations
+- View NGO food requests
 - Track donation history
-- Receive NGO responses
+- Real-time response notifications
+- Profile management with verification badges
 
-## Architecture
+### 🧑 For Individuals
+- Donate surplus food from home
+- Browse NGO requests
+- View donation history
+- Simple and intuitive interface
 
-```
-lib/
-├── main.dart                    # App entry point
-├── models/                      # Data models
-│   ├── ngo.dart
-│   ├── hotel.dart
-│   ├── individual.dart
-│   ├── donation_request.dart
-│   └── donation.dart
-├── services/                    # Business logic
-│   ├── firebase_config.dart
-│   └── firebase_service.dart
-├── screens/                     # UI screens
-│   ├── commonscreens/          # Shared screens
-│   │   ├── welcome.dart
-│   │   └── login.dart
-│   ├── ngoscreens/             # NGO workflow
-│   │   ├── registerngo.dart
-│   │   ├── ngomain.dart
-│   │   ├── ngohome.dart
-│   │   ├── donordetails.dart
-│   │   ├── ngohistory.dart
-│   │   ├── createdonation.dart
-│   │   ├── profile.dart
-│   │   └── response.dart
-│   ├── hotelscreens/           # Hotel workflow
-│   │   ├── hotelregister.dart
-│   │   ├── hotelmain.dart
-│   │   ├── hotelhome.dart
-│   │   ├── ngodetails.dart
-│   │   ├── donate.dart
-│   │   ├── donatehistory.dart
-│   │   ├── profile.dart
-│   │   └── response.dart
-│   └── individualscreens/      # Individual workflow
-│       ├── individualregister.dart
-│       ├── individualmain.dart
-│       ├── individualhome.dart
-│       ├── donate.dart
-│       ├── donatehistory.dart
-│       ├── profile.dart
-│       └── response.dart
-└── widgets/                    # Reusable widgets (future expansion)
-```
+### 🏢 For NGOs
+- Browse available food donations nearby
+- Create food requests specifying requirements
+- Accept and confirm donations
+- Track donation history
+- Manage organization profile
 
-## Firebase Setup
+## 🎨 Design
 
-### Prerequisites
-1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Firebase Authentication (Email/Password)
-3. Enable Firebase Realtime Database
-4. Configure Firebase for your platforms
+- **Clean UI**: Simple, modern interface with purple theme (#6C63FF)
+- **Intuitive Navigation**: Easy-to-use bottom navigation
+- **Responsive Design**: Works seamlessly across different screen sizes
+- **Real-time Updates**: Live data synchronization with Firebase
 
-### Database Structure
-```json
-{
-  "ngos": {
-    "userId": {
-      "id": "userId",
-      "ownerName": "NGO Owner",
-      "ngoName": "NGO Name",
-      "address": "Address",
-      "email": "email@example.com",
-      "phoneNumber": "1234567890",
-      "areaCovered": "Area",
-      "certificateUrl": "optional"
-    }
-  },
-  "hotels": {
-    "userId": {
-      "id": "userId",
-      "hotelName": "Hotel Name",
-      "email": "email@example.com",
-      "address": "Address",
-      "openingHours": "9AM-11PM",
-      "foodType": "Veg/Non-Veg/Both",
-      "imageUrl": "optional"
-    }
-  },
-  "individuals": {
-    "userId": {
-      "id": "userId",
-      "name": "Individual Name",
-      "email": "email@example.com",
-      "address": "Address",
-      "phoneNumber": "1234567890"
-    }
-  },
-  "donation_requests": {
-    "requestId": {
-      "id": "requestId",
-      "ngoId": "userId",
-      "ngoName": "NGO Name",
-      "description": "Food request description",
-      "foodType": "Veg/Non-Veg/Both",
-      "createdAt": 1234567890,
-      "isActive": true
-    }
-  },
-  "donations": {
-    "donationId": {
-      "id": "donationId",
-      "donorId": "userId",
-      "donorName": "Donor Name",
-      "donorType": "Hotel/Individual",
-      "ngoId": "userId",
-      "ngoName": "NGO Name",
-      "foodQuantity": "20 plates",
-      "madAt": 1234567890,
-      "expiryTime": 1234567890,
-      "imageUrl": "optional",
-      "status": "Pending/Accepted/Completed",
-      "createdAt": 1234567890
-    }
-  }
-}
-```
+## 🛠️ Tech Stack
 
-## Setup Instructions
+- **Framework**: Flutter/Dart
+- **Backend**: Firebase
+  - Authentication
+  - Realtime Database
+  - Cloud Storage (for profile pictures)
+- **State Management**: StatefulWidget
+- **Image Handling**: image_picker package
 
-### 1. Clone and Setup
+## 📋 Prerequisites
+
+- Flutter SDK (3.0+)
+- Dart SDK (3.0+)
+- Firebase account
+- Android Studio / Xcode (for mobile development)
+- Git
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/Mohitvaishnva/oneplate.git
 cd oneplate
+```
+
+### 2. Install Dependencies
+
+```bash
 flutter pub get
 ```
 
-### 2. Firebase Configuration
-- Replace the Firebase configuration in `lib/services/firebase_config.dart` with your project's config
-- For Android: Add `google-services.json` to `android/app/`
-- For iOS: Add `GoogleService-Info.plist` to `ios/Runner/`
+### 3. Firebase Setup
 
-### 3. Run the App
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+2. Add Android/iOS apps to your Firebase project
+3. Download and add configuration files:
+   - `google-services.json` (Android) → `android/app/`
+   - `GoogleService-Info.plist` (iOS) → `ios/Runner/`
+4. Enable Firebase Authentication (Email/Password)
+5. Enable Firebase Realtime Database
+
+### 4. Deploy Firebase Rules
+
+**Important**: You must deploy the Firebase rules for the app to work properly.
+
+#### Option 1: Firebase Console (Recommended)
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project
+3. Navigate to **Realtime Database** → **Rules**
+4. Copy the contents from `firebase_rules.json`
+5. Paste into the rules editor
+6. Click **Publish**
+
+#### Option 2: Firebase CLI
 ```bash
-# Clean build (if needed)
-flutter clean
-flutter pub get
+firebase deploy --only database
+```
 
-# Run on device/emulator
+### 5. Run the App
+
+```bash
 flutter run
 ```
 
-### 4. Troubleshooting Storage Issues
-If you encounter `INSTALL_FAILED_INSUFFICIENT_STORAGE`:
+## 📁 Project Structure
 
-1. **Clean project:**
-   ```bash
-   flutter clean
-   flutter pub get
-   ```
+```
+lib/
+├── components/        # Reusable UI components
+├── models/           # Data models
+├── screens/          # All app screens
+│   ├── commonscreens/   # Login, Welcome
+│   ├── hotelscreens/    # Hotel-specific screens
+│   ├── individualscreens/ # Individual user screens
+│   └── ngoscreens/      # NGO-specific screens
+├── services/         # Firebase and other services
+├── utils/           # Utilities and helpers
+├── widgets/         # Custom widgets
+└── main.dart        # App entry point
+```
 
-2. **Free up emulator space:**
-   - Wipe emulator data in Android Studio
-   - Create new emulator with more storage
-   - Or use physical device
+## 🗄️ Database Schema
 
-3. **Alternative run methods:**
-   ```bash
-   # Run in release mode (smaller APK)
-   flutter run --release
-   
-   # Run on web
-   flutter run -d chrome
-   ```
+### Collections
+- **users**: Base user information
+- **hotels**: Hotel-specific data
+- **individuals**: Individual user data
+- **ngos**: NGO organization data
+- **donations**: Food donations created by hotels/individuals
+- **donation_requests**: Food requests created by NGOs
 
-## Current Implementation Status
+## 🔐 Firebase Security Rules
 
-### ✅ Completed Features
-- Complete project structure
-- Firebase integration (Auth + Realtime Database)
-- User registration for all user types (NGO, Hotel, Individual)
-- Login system with user type detection
-- NGO workflow:
-  - Registration with organization details
-  - Dashboard with statistics
-  - Create food requests
-  - View and accept donations
-  - Bottom navigation
-- Hotel workflow:
-  - Registration with hotel details
-  - Dashboard showing NGO requests
-  - Send donations to NGOs
-  - Bottom navigation
-- Individual workflow:
-  - Basic registration and navigation structure
-- Material Design UI with consistent theming
+The app uses comprehensive security rules to ensure:
+- Authenticated users can read public data
+- Users can only modify their own data
+- Proper validation of donation and request data
+- Database indexes for optimized queries
 
-### 🚧 Features for Future Enhancement
-- Image upload functionality for certificates and food photos
-- Push notifications for new requests/donations
-- Real-time chat between NGOs and donors
-- Location-based matching
-- Donation tracking and delivery status
-- Rating and review system
-- Advanced filtering and search
-- Analytics dashboard for NGOs
-- Multi-language support
+## 📸 Screenshots
 
-## Dependencies
-- `firebase_core`: Firebase SDK
-- `firebase_auth`: Authentication
-- `firebase_database`: Realtime Database
-- `image_picker`: Image selection (for future use)
-- `cached_network_image`: Image caching (for future use)
+[Add screenshots here]
 
-## Contributing
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
 1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## License
-This project is licensed under the MIT License.
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👨‍💻 Developer
+
+**Mohit Vaishnav**
+- GitHub: [@Mohitvaishnva](https://github.com/Mohitvaishnva)
+
+## 🙏 Acknowledgments
+
+- Flutter team for the amazing framework
+- Firebase for backend infrastructure
+- All contributors who help make this project better
+
+## 📞 Support
+
+For support, please open an issue in the GitHub repository or contact the developer.
+
+---
+
+**Made with ❤️ to reduce food waste and help those in need**

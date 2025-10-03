@@ -18,7 +18,8 @@ class FirebaseConfig {
     projectId: "tihom-7d6e9",
     storageBucket: "tihom-7d6e9.appspot.com",
     messagingSenderId: "853180587280",
-    appId: "1:853180587280:web:b23b51d87d2140528b5995",
+    appId: "1:853180587280:ios:b23b51d87d2140528b5995", // Updated to iOS app ID
+    iosBundleId: "com.example.loopinf",
   );
 
   static const FirebaseOptions web = FirebaseOptions(

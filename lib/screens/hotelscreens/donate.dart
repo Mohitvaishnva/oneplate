@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/firebase_service.dart';
 import '../../models/donation_models.dart' as models;
 import '../../utils/database_enums.dart';
-import '../ngoscreens/response.dart';
+import 'hotelmain.dart';
 
 class DonateScreen extends StatefulWidget {
   final Map<String, dynamic> request;
@@ -36,18 +36,11 @@ class _DonateScreenState extends State<DonateScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header with gradient
+            // Header
             Container(
               height: 120,
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFE1BEE7),
-                    Color(0xFFCE93D8),
-                  ],
-                ),
+                color: Color(0xFF6C63FF),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -120,12 +113,7 @@ class _DonateScreenState extends State<DonateScreen> {
                                     width: 50,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [
-                                          Color(0xFFE1BEE7),
-                                          Color(0xFFCE93D8),
-                                        ],
-                                      ),
+                                      color: const Color(0xFF6C63FF),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: const Icon(
@@ -164,7 +152,7 @@ class _DonateScreenState extends State<DonateScreen> {
                                 children: [
                                   const Icon(
                                     Icons.people,
-                                    color: Color(0xFFCE93D8),
+                                    color: Color(0xFF6C63FF),
                                     size: 20,
                                   ),
                                   const SizedBox(width: 8),
@@ -179,7 +167,7 @@ class _DonateScreenState extends State<DonateScreen> {
                                 children: [
                                   const Icon(
                                     Icons.location_on,
-                                    color: Color(0xFFCE93D8),
+                                    color: Color(0xFF6C63FF),
                                     size: 20,
                                   ),
                                   const SizedBox(width: 8),
@@ -232,7 +220,7 @@ class _DonateScreenState extends State<DonateScreen> {
                             ),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.food_bank, color: Color(0xFFCE93D8)),
+                            prefixIcon: Icon(Icons.food_bank, color: Color(0xFF6C63FF)),
                           ),
                           items: _foodTypes.map((String type) {
                             return DropdownMenuItem<String>(
@@ -279,7 +267,7 @@ class _DonateScreenState extends State<DonateScreen> {
                             ),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.people, color: Color(0xFFCE93D8)),
+                            prefixIcon: Icon(Icons.people, color: Color(0xFF6C63FF)),
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) {
@@ -320,7 +308,7 @@ class _DonateScreenState extends State<DonateScreen> {
                             ),
                             filled: true,
                             fillColor: Colors.white,
-                            prefixIcon: Icon(Icons.note, color: Color(0xFFCE93D8)),
+                            prefixIcon: Icon(Icons.note, color: Color(0xFF6C63FF)),
                           ),
                           maxLines: 3,
                         ),
@@ -335,7 +323,7 @@ class _DonateScreenState extends State<DonateScreen> {
                               height: 55,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: const Color(0xFFCE93D8),
+                                  color: const Color(0xFF6C63FF),
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(15),
@@ -344,7 +332,7 @@ class _DonateScreenState extends State<DonateScreen> {
                                 onPressed: () => Navigator.pop(context),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFFCE93D8),
+                                  foregroundColor: const Color(0xFF6C63FF),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
@@ -363,31 +351,13 @@ class _DonateScreenState extends State<DonateScreen> {
                           const SizedBox(width: 16),
                           Expanded(
                             flex: 2,
-                            child: Container(
-                              height: 55,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFFE1BEE7),
-                                    Color(0xFFCE93D8),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFFCE93D8).withOpacity(0.3),
-                                    spreadRadius: 1,
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
+                            child: ElevatedButton(
                                 onPressed: _isSubmitting ? null : _submitDonation,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
+                                  backgroundColor: const Color(0xFF6C63FF),
                                   foregroundColor: Colors.white,
-                                  elevation: 0,
+                                  minimumSize: const Size(double.infinity, 55),
+                                  elevation: 3,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
                                   ),
@@ -419,11 +389,9 @@ class _DonateScreenState extends State<DonateScreen> {
                                         ],
                                       ),
                               ),
-                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -493,24 +461,15 @@ class _DonateScreenState extends State<DonateScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Donation submitted successfully!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF6C63FF),
           ),
         );
         
-        // Navigate to response screen with donor details
+        // Navigate to hotel main screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => NGOResponseScreen(
-              donorName: donorName,
-              donorPhone: donorPhone,
-              donorType: donorType.value,
-              donationDetails: {
-                'foodType': _selectedFoodType,
-                'quantity': _quantityController.text.trim(),
-                'notes': _notesController.text.trim(),
-              },
-            ),
+            builder: (context) => const HotelMainScreen(),
           ),
         );
       }

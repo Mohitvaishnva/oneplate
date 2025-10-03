@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../firebaseconfig.dart';
-import 'response.dart';
+import 'ngomain.dart';
 
 class DonorDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> donation;
@@ -78,10 +78,15 @@ class _DonorDetailsScreenState extends State<DonorDetailsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Donation marked as completed!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF6C63FF),
           ),
         );
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NGOMainScreen(),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -118,7 +123,12 @@ class _DonorDetailsScreenState extends State<DonorDetailsScreen> {
             backgroundColor: Colors.orange,
           ),
         );
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NGOMainScreen(),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -149,38 +159,60 @@ class _DonorDetailsScreenState extends State<DonorDetailsScreen> {
           .child(widget.donation['id'])
           .update({'status': 'accepted'});
 
+      // Get current NGO information
+      final currentUserId = getCurrentUserId();
+      String ngoName = 'NGO';
+      
+      if (currentUserId != null) {
+        try {
+          final ngoSnapshot = await dbRef.child(DatabasePaths.ngos).child(currentUserId).get();
+          if (ngoSnapshot.exists) {
+            final ngoData = Map<String, dynamic>.from(ngoSnapshot.value as Map<Object?, Object?>);
+            ngoName = ngoData['name'] ?? ngoData['ngoName'] ?? 'NGO';
+          }
+        } catch (e) {
+          // If error fetching NGO data, use default name
+        }
+      }
+      
+      // Create notification for the donor
+      final donorId = widget.donation['donorId'];
+      final donorType = _safeStringConversion(widget.donation['donorType']).toLowerCase();
+      
+      if (donorId != null) {
+        final notificationId = dbRef.child('notifications').push().key;
+        final notification = {
+          'id': notificationId,
+          'donorId': donorId,
+          'donorType': donorType,
+          'ngoName': ngoName,
+          'message': '$ngoName has accepted your donation!',
+          'donationId': widget.donation['id'],
+          'donationTitle': widget.donation['title'] ?? 'Food Donation',
+          'foodType': widget.donation['foodType'] ?? 'Food',
+          'quantity': widget.donation['quantity'] ?? 'N/A',
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          'isRead': false,
+          'type': 'donation_accepted'
+        };
+        
+        await dbRef.child('notifications').child(notificationId!).set(notification);
+      }
+
       if (mounted) {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Donation accepted successfully!'),
-            backgroundColor: Colors.green,
+            content: Text('Donation accepted successfully! Donor has been notified.'),
+            backgroundColor: Color(0xFF6C63FF),
           ),
         );
 
-        // Navigate to response screen with donor details
+        // Navigate to NGO main screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => NGOResponseScreen(
-              donorName: _safeStringConversion(widget.donation['donorName']).isNotEmpty 
-                  ? _safeStringConversion(widget.donation['donorName']) 
-                  : 'Unknown Donor',
-              donorPhone: _safeStringConversion(widget.donation['donorPhone']).isNotEmpty 
-                  ? _safeStringConversion(widget.donation['donorPhone']) 
-                  : 'No phone provided',
-              donorType: _safeStringConversion(widget.donation['donorType']).isNotEmpty 
-                  ? _safeStringConversion(widget.donation['donorType']) 
-                  : 'Unknown',
-              donationDetails: {
-                'foodType': _safeStringConversion(widget.donation['foodType']),
-                'quantity': _safeStringConversion(widget.donation['quantity']).isNotEmpty 
-                    ? _safeStringConversion(widget.donation['quantity']) 
-                    : '0',
-                'notes': _safeStringConversion(widget.donation['notes']),
-                'donationDate': _safeStringConversion(widget.donation['donationDate']),
-              },
-            ),
+            builder: (context) => const NGOMainScreen(),
           ),
         );
       }

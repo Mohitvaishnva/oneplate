@@ -33,39 +33,44 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
     });
 
     try {
-      print('Loading donation requests...'); // Debug log
-      print('Current user: ${getCurrentUserId()}'); // Debug log
-      print('User authenticated: ${isUserAuthenticated()}'); // Debug log
-      
       // Load donation requests
       final requestsSnapshot = await dbRef.child(DatabasePaths.donationRequests).get();
-      print('Requests snapshot exists: ${requestsSnapshot.exists}'); // Debug log
       
       if (requestsSnapshot.exists) {
-        print('Raw requests data: ${requestsSnapshot.value}'); // Debug log
         final requestsData = requestsSnapshot.value as Map<Object?, Object?>;
         List<Map<String, dynamic>> requests = [];
         
-        print('Processing ${requestsData.length} requests'); // Debug log
-        
-        requestsData.forEach((key, value) {
+        for (var entry in requestsData.entries) {
           try {
-            print('Processing request key: $key, value: $value'); // Debug log
+            final key = entry.key;
+            final value = entry.value;
             final request = Map<String, dynamic>.from(value as Map<Object?, Object?>);
             request['id'] = (key is String) ? key : key.toString();
             
-            print('Request isActive: ${request['isActive']}'); // Debug log
-            
             // Only add active requests
             if (request['isActive'] == true) {
+              // Fetch NGO details if ngoId exists
+              if (request['ngoId'] != null) {
+                final ngoSnapshot = await dbRef
+                    .child(DatabasePaths.ngos)
+                    .child(request['ngoId'].toString())
+                    .get();
+                
+                if (ngoSnapshot.exists) {
+                  final ngoData = Map<String, dynamic>.from(ngoSnapshot.value as Map<Object?, Object?>);
+                  request['ngoName'] = ngoData['name'] ?? ngoData['ngoName'] ?? 'Unknown NGO';
+                  request['address'] = ngoData['address'] ?? ngoData['location'] ?? 'No address';
+                  request['phone'] = ngoData['phone'] ?? '';
+                }
+              }
+              
               requests.add(request);
-              print('Added active request: ${request['ngoName']}'); // Debug log
             }
           } catch (e) {
             print('Error processing request: $e');
             // Skip this entry if casting fails
           }
-        });
+        }
         
         // Sort by creation date (newest first)
         requests.sort((a, b) {
@@ -78,15 +83,9 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
           }
         });
         
-        print('Total active requests found: ${requests.length}'); // Debug log
-        
         setState(() {
           donationRequests = requests;
         });
-        
-        print('Updated state with ${donationRequests.length} requests'); // Debug log
-      } else {
-        print('No donation requests found in database'); // Debug log
       }
 
       // Load total donations count for current hotel
@@ -122,78 +121,64 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
           children: [
             // Header
             Container(
-              height: 140,
+              height: 120,
               decoration: const BoxDecoration(
                 color: Color(0xFF6C63FF),
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'HOTEL DASHBOARD',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                'Share your extra food with NGOs',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                        Text(
+                          'HOTEL DASHBOARD',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                        IconButton(
-                          onPressed: _loadData,
-                          icon: const Icon(
-                            Icons.refresh,
-                            color: Colors.white,
-                            size: 22,
+                        SizedBox(height: 2),
+                        Text(
+                          'Share food with NGOs',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
                     Row(
                       children: [
                         Expanded(
                           child: Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(
                                   Icons.volunteer_activism,
                                   color: Colors.white,
-                                  size: 22,
+                                  size: 16,
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 1),
                                 Text(
                                   totalDonations.toString(),
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -201,7 +186,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
                                 const Text(
                                   'Donations',
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 8,
                                     color: Colors.white70,
                                   ),
                                 ),
@@ -209,26 +194,27 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(
                                   Icons.food_bank,
                                   color: Colors.white,
-                                  size: 22,
+                                  size: 16,
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 1),
                                 Text(
                                   donationRequests.length.toString(),
                                   style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -236,7 +222,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
                                 const Text(
                                   'Requests',
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 8,
                                     color: Colors.white70,
                                   ),
                                 ),
@@ -367,7 +353,6 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
                               return GestureDetector(
                                 onTap: () {
                                   // Navigate to donate screen
-                                  print('Tapped on: ${_safeStringConversion(request['ngoName'])}');
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -453,6 +438,30 @@ class _HotelHomeScreenState extends State<HotelHomeScreen> {
                                                 ],
                                               ),
                                               const SizedBox(height: 6),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.location_on,
+                                                    size: 12,
+                                                    color: Color(0xFF6C63FF),
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Expanded(
+                                                    child: Text(
+                                                      _safeStringConversion(request['address']).isNotEmpty
+                                                          ? _safeStringConversion(request['address'])
+                                                          : 'No address',
+                                                      style: const TextStyle(
+                                                        fontSize: 11,
+                                                        color: Colors.black54,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4),
                                               Text(
                                                 _safeStringConversion(request['description']).isNotEmpty
                                                     ? _safeStringConversion(request['description'])

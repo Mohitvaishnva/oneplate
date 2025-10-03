@@ -11,7 +11,7 @@ class NGODetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('NGO Details'),
-        backgroundColor: Colors.green,
+        backgroundColor: const Color(0xFF6C63FF),
         foregroundColor: Colors.white,
       ),
       body: Padding(
@@ -29,7 +29,7 @@ class NGODetailsScreen extends StatelessWidget {
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: Colors.green,
+                          backgroundColor: const Color(0xFF6C63FF),
                           radius: 30,
                           child: Text(
                             (request['ngoName'] ?? 'N')[0].toUpperCase(),
@@ -168,7 +168,7 @@ class NGODetailsScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: const Color(0xFF6C63FF),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(

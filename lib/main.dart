@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase_config.dart';
 import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: FirebaseConfig.android, // Use appropriate config based on platform
-  );
+  
+  // Use platform-specific Firebase configuration
+  FirebaseOptions firebaseOptions;
+  if (defaultTargetPlatform == TargetPlatform.iOS) {
+    firebaseOptions = FirebaseConfig.ios;
+  } else if (defaultTargetPlatform == TargetPlatform.android) {
+    firebaseOptions = FirebaseConfig.android;
+  } else {
+    firebaseOptions = FirebaseConfig.web;
+  }
+  
+  await Firebase.initializeApp(options: firebaseOptions);
   runApp(const OnePlateApp());
 }
 

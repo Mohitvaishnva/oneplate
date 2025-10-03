@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'ngohome.dart';
 import 'ngohistory.dart';
 import 'createdonation.dart';
+import 'responses_list.dart';
 import 'ngoprofile.dart';
 
 class NGOMainScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _NGOMainScreenState extends State<NGOMainScreen> {
     const NGOHomeScreen(),
     const NGOHistoryScreen(),
     const CreateDonationScreen(),
+    const NGOResponsesListScreen(),
     const NGOProfileScreen(),
   ];
 
@@ -57,6 +59,10 @@ class _NGOMainScreenState extends State<NGOMainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.add_circle),
             label: 'Request',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Responses',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
