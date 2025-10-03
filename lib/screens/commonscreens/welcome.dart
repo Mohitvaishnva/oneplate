@@ -7,215 +7,278 @@ import 'login.dart';
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  @override
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-              
-              // Logo Section
-              Column(
-                children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6C63FF),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.restaurant_menu,
-                      size: 60,
-                      color: Colors.white,
-                    ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('lib/images/welcome.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                
+                // Welcome to text
+                const Text(
+                  'Welcome to',
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF8B4513),
+                    fontStyle: FontStyle.italic,
                   ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  const Text(
-                    'OnePlate',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D3142),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  const Text(
-                    'Connecting Hearts, Sharing Meals',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF9A9A9A),
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const Spacer(),
-              
-              // Buttons Section
-              Column(
-                children: [
-                  // NGO Button
-                  _buildUserTypeButton(
-                    context: context,
-                    text: 'Continue as NGO',
-                    icon: Icons.volunteer_activism,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterNGOScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Hotel Button
-                  _buildUserTypeButton(
-                    context: context,
-                    text: 'Continue as Hotel',
-                    icon: Icons.hotel,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HotelRegisterScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Individual Button
-                  _buildUserTypeButton(
-                    context: context,
-                    text: 'Continue as Individual',
-                    icon: Icons.person,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const IndividualRegisterScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Login Button
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xFF6C63FF),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
+                ),
+                
+                const SizedBox(height: 15),
+                
+                // Logo only - larger size
+                Center(
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    child: Image.asset(
+                      'lib/images/onelogo.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF4CAF50),
+                              width: 4,
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 24,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.login,
-                                color: Color(0xFF6C63FF),
-                                size: 20,
+                          child: const Icon(
+                            Icons.restaurant,
+                            color: Color(0xFFFF9800),
+                            size: 80,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 30),
+                
+                // Select Your Service text
+                const Text(
+                  'Select Your Service',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF8B4513),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                
+                const SizedBox(height: 25),                // Three service options with normal images
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // NGO Option
+                      Flexible(
+                        flex: 1,
+                        child: _buildServiceOption(
+                          context: context,
+                          imagePath: 'lib/images/log1.png',
+                          title: 'NGO',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterNGOScreen(),
                               ),
-                              SizedBox(width: 12),
-                              Text(
+                            );
+                          },
+                        ),
+                      ),
+                      
+                      const SizedBox(width: 15),
+                      
+                      // Hotels/Restro Option
+                      Flexible(
+                        flex: 1,
+                        child: _buildServiceOption(
+                          context: context,
+                          imagePath: 'lib/images/log2.png',
+                          title: 'Hotels/Restro',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HotelRegisterScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      
+                      const SizedBox(width: 15),
+                      
+                      // Individual Option
+                      Flexible(
+                        flex: 1,
+                        child: _buildServiceOption(
+                          context: context,
+                          imagePath: 'lib/images/log3.png',
+                          title: 'Individual',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const IndividualRegisterScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 40),
+                
+                // Already have account login button
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF6C63FF),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 16,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(
+                              Icons.login,
+                              color: Color(0xFF6C63FF),
+                              size: 18,
+                            ),
+                            SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
                                 'Already have an account? Login',
                                 style: TextStyle(
                                   color: Color(0xFF6C63FF),
-                                  fontSize: 16,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
+                ),
+                
+                const SizedBox(height: 30),
                 ],
               ),
-              
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildUserTypeButton({
+  Widget _buildServiceOption({
     required BuildContext context,
-    required String text,
-    required IconData icon,
+    required String imagePath,
+    required String title,
     required VoidCallback onPressed,
   }) {
-    return SizedBox(
-      height: 60,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF6C63FF),
-          foregroundColor: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 24),
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Image with slight shadow
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: AspectRatio(
+                aspectRatio: 1.0,
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.image,
+                        color: Colors.grey,
+                        size: 40,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          // Title below image
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF2D3142),
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
